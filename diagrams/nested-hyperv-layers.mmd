@@ -1,0 +1,46 @@
+graph TB
+    subgraph LAYER1["PHYSICAL HARDWARE"]
+        CPU["CPU<br/>VT-x / AMD-V"]
+        RAM["RAM"]
+        DISK["Storage"]
+        NIC["Physical NIC"]
+    end
+
+    subgraph LAYER2["WINDOWS CLIENT - Level 1 Hypervisor"]
+        WIN_CLIENT["Windows Client OS<br/>Hyper-V Enabled"]
+        VSWITCH_L1["Virtual Switch L1<br/>External / Internal"]
+        VM_SETTINGS["VM Settings<br/>Expose Virtualization Extensions<br/>MAC Address Spoofing: ON"]
+    end
+
+    subgraph LAYER3["WINDOWS SERVER VM - Level 2 Nested Hypervisor"]
+        WIN_SERVER["Windows Server<br/>Hyper-V Role Installed"]
+        VSWITCH_L2["Virtual Switch L2<br/>Internal Network"]
+        HV_MANAGER["Hyper-V Manager<br/>Create & Manage VMs"]
+    end
+
+    subgraph LAYER4["NESTED GUEST VM"]
+        GUEST["Guest OS<br/>Boots Successfully<br/>Network Access"]
+    end
+
+    CPU --> WIN_CLIENT
+    RAM --> WIN_CLIENT
+    DISK --> WIN_CLIENT
+    NIC --> WIN_CLIENT
+    WIN_CLIENT --> VSWITCH_L1
+    WIN_CLIENT --> VM_SETTINGS
+    VM_SETTINGS --> WIN_SERVER
+    VSWITCH_L1 --> WIN_SERVER
+    WIN_SERVER --> VSWITCH_L2
+    WIN_SERVER --> HV_MANAGER
+    HV_MANAGER --> GUEST
+    VSWITCH_L2 --> GUEST
+
+    classDef hw fill:#868e96,stroke:#495057,color:#fff,stroke-width:2px
+    classDef l1 fill:#4dabf7,stroke:#1864ab,color:#fff,stroke-width:2px
+    classDef l2 fill:#69db7c,stroke:#2b8a3e,color:#fff,stroke-width:2px
+    classDef l3 fill:#ffa94d,stroke:#d9480f,color:#fff,stroke-width:2px
+
+    class CPU,RAM,DISK,NIC hw
+    class WIN_CLIENT,VSWITCH_L1,VM_SETTINGS l1
+    class WIN_SERVER,VSWITCH_L2,HV_MANAGER l2
+    class GUEST l3

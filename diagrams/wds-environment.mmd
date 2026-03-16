@@ -1,0 +1,43 @@
+graph TB
+    subgraph PHYSICAL["PHYSICAL HYPER-V HOST - Windows"]
+        HOST["Physical Host<br/>Windows with Hyper-V"]
+    end
+
+    subgraph VIRTUAL_MACHINES["HYPER-V VIRTUAL MACHINES"]
+        subgraph DC1_VM["VM: DC1 - Domain Controller"]
+            DC1["Windows Server<br/>Active Directory<br/>DNS Server<br/>DHCP Server"]
+        end
+
+        subgraph WDS_VM["VM: WDS - Deployment Server"]
+            WDS["Windows Server<br/>WDS Role Installed<br/>Windows SIM<br/>Answer File Config"]
+            WDS_SHARE["E:\\RemoteInstall\\<br/>WdsClientUnattend\\<br/>WDSClientUnattend.xml"]
+        end
+
+        subgraph CLIENT_VM["VM: PXE Client"]
+            CLIENT["New Machine<br/>PXE Boot<br/>Unattended Install"]
+        end
+    end
+
+    subgraph NETWORK["VIRTUAL NETWORK"]
+        VSWITCH["Hyper-V Virtual Switch<br/>Internal/Private Network"]
+    end
+
+    HOST --> DC1_VM
+    HOST --> WDS_VM
+    HOST --> CLIENT_VM
+    DC1 --> VSWITCH
+    WDS --> VSWITCH
+    CLIENT --> VSWITCH
+    WDS_SHARE --> CLIENT
+
+    classDef host fill:#868e96,stroke:#495057,color:#fff,stroke-width:3px
+    classDef dc fill:#4dabf7,stroke:#1864ab,color:#fff,stroke-width:2px
+    classDef wds fill:#69db7c,stroke:#2b8a3e,color:#fff,stroke-width:2px
+    classDef client fill:#ffa94d,stroke:#d9480f,color:#fff,stroke-width:2px
+    classDef network fill:#fcc419,stroke:#e67700,color:#333,stroke-width:2px
+
+    class HOST host
+    class DC1 dc
+    class WDS,WDS_SHARE wds
+    class CLIENT client
+    class VSWITCH network

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <!-- ============================================================= -->
+    <!-- PASS 1 - windowsPE                                            -->
+    <!-- Language/Locale, Disk Configuration, WDS Image Selection       -->
+    <!-- ============================================================= -->
+    <settings pass="windowsPE">
+        <!-- International Settings for WinPE -->
+        <component name="Microsoft-Windows-International-Core-WinPE"
+                   processorArchitecture="amd64"
+                   publicKeyToken="31bf3856ad364e35"
+                   language="neutral"
+                   versionScope="nonSxS"
+                   xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SetupUILanguage>
+                <UILanguage>en-US</UILanguage>
+            </SetupUILanguage>
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
+        </component>
+
+        <!-- Disk Configuration - UEFI/GPT Layout (4 Partitions) -->
+        <component name="Microsoft-Windows-Setup"
+                   processorArchitecture="amd64"
+                   publicKeyToken="31bf3856ad364e35"
+                   language="neutral"
+                   versionScope="nonSxS"
+                   xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DiskConfiguration>
+                <Disk wcm:action="add">
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+
+                    <!-- Create 4 Partitions for UEFI/GPT -->
+                    <CreatePartitions>
+                        <!-- Partition 1: WinRE (Windows Recovery Environment) -->
+                        <CreatePartition wcm:action="add">
+                            <Order>1</Order>
+                            <Size>450</Size>
+                            <Type>Primary</Type>
+                        </CreatePartition>
+
+                        <!-- Partition 2: EFI System Partition -->
+                        <CreatePartition wcm:action="add">
+                            <Order>2</Order>
+                            <Size>100</Size>
+                            <Type>EFI</Type>
+                        </CreatePartition>
+
+                        <!-- Partition 3: MSR (Microsoft Reserved) -->
+                        <CreatePartition wcm:action="add">
+                            <Order>3</Order>
+                            <Size>16</Size>
+                            <Type>MSR</Type>
+                        </CreatePartition>
+
+                        <!-- Partition 4: Windows (Primary OS) -->
+                        <CreatePartition wcm:action="add">
+                            <Order>4</Order>
+                            <Extend>true</Extend>
+                            <Type>Primary</Type>
+                        </CreatePartition>
+                    </CreatePartitions>
+
+                    <!-- Modify/Format Partitions -->
+                    <ModifyPartitions>
+                        <!-- ModifyPartition 1: WinRE -->
+                        <ModifyPartition wcm:action="add">
+                            <Format>NTFS</Format>
+                            <Label>WinRE</Label>
+                            <Order>1</Order>
+                            <PartitionID>1</PartitionID>
+                            <TypeID>DE94BBA4-06D1-4D40-A16A-BFD50179D6AC</TypeID>
+                        </ModifyPartition>
+
+                        <!-- ModifyPartition 2: EFI -->
+                        <ModifyPartition wcm:action="add">
+                            <Format>FAT32</Format>
+                            <Label>System</Label>
+                            <Order>2</Order>
+                            <PartitionID>2</PartitionID>
+                        </ModifyPartition>
+
+                        <!-- ModifyPartition 3: MSR (No format, no label) -->
+                        <ModifyPartition wcm:action="add">
+                            <Order>3</Order>
+                            <PartitionID>3</PartitionID>
+                        </ModifyPartition>
+
+                        <!-- ModifyPartition 4: Windows -->
+                        <ModifyPartition wcm:action="add">
+                            <Format>NTFS</Format>
+                            <Label>Windows</Label>
+                            <Letter>C</Letter>
+                            <Order>4</Order>
+                            <PartitionID>4</PartitionID>
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                </Disk>
+            </DiskConfiguration>
+
+            <!-- Windows Deployment Services - Image Selection -->
+            <WindowsDeploymentServices>
+                <ImageSelection>
+                    <InstallImage>
+                        <ImageName>Windows Server 2016 SERVERSTANDARD</ImageName>
+                        <ImageGroup>ImageGroup1</ImageGroup>
+                        <Filename>install.wim</Filename>
+                    </InstallImage>
+                    <InstallTo>
+                        <DiskID>0</DiskID>
+                        <PartitionID>4</PartitionID>
+                    </InstallTo>
+                </ImageSelection>
+                <Login>
+                    <Credentials>
+                        <Domain>YourDomain.com</Domain>
+                        <Password>YourPassword</Password>
+                        <Username>Administrator</Username>
+                    </Credentials>
+                </Login>
+            </WindowsDeploymentServices>
+        </component>
+    </settings>
+
+    <!-- ============================================================= -->
+    <!-- PASS 4 - specialize                                           -->
+    <!-- Domain Join, Computer Name                                    -->
+    <!-- ============================================================= -->
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-Shell-Setup"
+                   processorArchitecture="amd64"
+                   publicKeyToken="31bf3856ad364e35"
+                   language="neutral"
+                   versionScope="nonSxS"
+                   xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ComputerName>*</ComputerName>
+            <RegisteredOrganization>YourOrganization</RegisteredOrganization>
+            <RegisteredOwner>YourName</RegisteredOwner>
+            <TimeZone>Eastern Standard Time</TimeZone>
+        </component>
+
+        <component name="Microsoft-Windows-UnattendedJoin"
+                   processorArchitecture="amd64"
+                   publicKeyToken="31bf3856ad364e35"
+                   language="neutral"
+                   versionScope="nonSxS"
+                   xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Identification>
+                <JoinDomain>YourDomain.com</JoinDomain>
+                <Credentials>
+                    <Domain>YourDomain.com</Domain>
+                    <Password>YourPassword</Password>
+                    <Username>Administrator</Username>
+                </Credentials>
+            </Identification>
+        </component>
+
+        <!-- International Settings -->
+        <component name="Microsoft-Windows-International-Core"
+                   processorArchitecture="amd64"
+                   publicKeyToken="31bf3856ad364e35"
+                   language="neutral"
+                   versionScope="nonSxS"
+                   xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
+        </component>
+    </settings>
+
+    <!-- ============================================================= -->
+    <!-- PASS 7 - oobeSystem                                           -->
+    <!-- OOBE, User Accounts, AutoLogon                                -->
+    <!-- ============================================================= -->
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup"
+                   processorArchitecture="amd64"
+                   publicKeyToken="31bf3856ad364e35"
+                   language="neutral"
+                   versionScope="nonSxS"
+                   xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+            <!-- OOBE Settings -->
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+                <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <ProtectYourPC>1</ProtectYourPC>
+                <NetworkLocation>Work</NetworkLocation>
+            </OOBE>
+
+            <!-- AutoLogon with Domain Account -->
+            <AutoLogon>
+                <Enabled>true</Enabled>
+                <LogonCount>1</LogonCount>
+                <Username>Administrator</Username>
+                <Domain>YourDomain.com</Domain>
+                <Password>
+                    <Value>YourPassword</Value>
+                    <PlainText>true</PlainText>
+                </Password>
+            </AutoLogon>
+
+            <!-- User Accounts -->
+            <UserAccounts>
+                <!-- Local Administrator Account -->
+                <LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <Name>Administrator</Name>
+                        <Group>Administrators</Group>
+                        <Password>
+                            <Value>YourPassword</Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+                    </LocalAccount>
+                </LocalAccounts>
+            </UserAccounts>
+        </component>
+    </settings>
+</unattend>

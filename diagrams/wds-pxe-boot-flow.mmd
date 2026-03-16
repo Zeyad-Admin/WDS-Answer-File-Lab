@@ -1,0 +1,57 @@
+graph TB
+    subgraph BOOT["1. PXE BOOT"]
+        CLIENT_BOOT["Client Powers On<br/>PXE Boot Enabled"]
+        DHCP_REQ["DHCP Request<br/>Obtain IP Address"]
+        PXE_DISC["PXE Discovery<br/>Find WDS Server"]
+    end
+
+    subgraph WDS_PROCESS["2. WDS SERVER PROCESSING"]
+        WDS_RESP["WDS Server Responds<br/>Sends Boot Image"]
+        BOOT_IMG["Boot Image Loads<br/>WinPE Environment"]
+        ANSWER_FILE["Answer File Applied<br/>WDSClientUnattend.xml"]
+    end
+
+    subgraph DISK_SETUP["3. DISK CONFIGURATION"]
+        WIPE_DISK["Wipe Disk 0"]
+        CREATE_PART["Create 4 GPT Partitions<br/>WinRE / EFI / MSR / Windows"]
+        FORMAT_PART["Format Partitions<br/>NTFS / FAT32"]
+    end
+
+    subgraph INSTALL["4. OS INSTALLATION"]
+        IMG_COPY["Copy Install Image<br/>install.wim to Partition 4"]
+        DRIVERS["Install Drivers"]
+        SPECIALIZE["Pass 4: Specialize<br/>Domain Join + Settings"]
+    end
+
+    subgraph FINALIZE["5. FINALIZATION"]
+        OOBE["Pass 7: OOBE<br/>Skip Setup Screens"]
+        AUTO_LOGON["Auto Logon<br/>Domain User Account"]
+        COMPLETE["Deployment Complete<br/>Ready to Use"]
+    end
+
+    CLIENT_BOOT --> DHCP_REQ
+    DHCP_REQ --> PXE_DISC
+    PXE_DISC --> WDS_RESP
+    WDS_RESP --> BOOT_IMG
+    BOOT_IMG --> ANSWER_FILE
+    ANSWER_FILE --> WIPE_DISK
+    WIPE_DISK --> CREATE_PART
+    CREATE_PART --> FORMAT_PART
+    FORMAT_PART --> IMG_COPY
+    IMG_COPY --> DRIVERS
+    DRIVERS --> SPECIALIZE
+    SPECIALIZE --> OOBE
+    OOBE --> AUTO_LOGON
+    AUTO_LOGON --> COMPLETE
+
+    classDef boot fill:#ff6b6b,stroke:#c92a2a,color:#fff,stroke-width:2px
+    classDef wds fill:#4dabf7,stroke:#1864ab,color:#fff,stroke-width:2px
+    classDef disk fill:#ffa94d,stroke:#d9480f,color:#fff,stroke-width:2px
+    classDef install fill:#69db7c,stroke:#2b8a3e,color:#fff,stroke-width:2px
+    classDef final fill:#e599f7,stroke:#9c36b5,color:#fff,stroke-width:2px
+
+    class CLIENT_BOOT,DHCP_REQ,PXE_DISC boot
+    class WDS_RESP,BOOT_IMG,ANSWER_FILE wds
+    class WIPE_DISK,CREATE_PART,FORMAT_PART disk
+    class IMG_COPY,DRIVERS,SPECIALIZE install
+    class OOBE,AUTO_LOGON,COMPLETE final

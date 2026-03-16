@@ -1,0 +1,32 @@
+graph LR
+    subgraph DISK["DISK 0 - GPT PARTITION LAYOUT"]
+        subgraph P1["Partition 1<br/>WinRE"]
+            P1_INFO["Size: 450 MB<br/>Format: NTFS<br/>Label: WinRE<br/>TypeID: DE94BBA4-06D1-<br/>4D40-A16A-BFD50179D6AC"]
+        end
+
+        subgraph P2["Partition 2<br/>EFI"]
+            P2_INFO["Size: 100 MB<br/>Format: FAT32<br/>Label: System<br/>Type: EFI"]
+        end
+
+        subgraph P3["Partition 3<br/>MSR"]
+            P3_INFO["Size: 16 MB<br/>No Format<br/>No Label<br/>Type: MSR"]
+        end
+
+        subgraph P4["Partition 4<br/>Windows"]
+            P4_INFO["Size: Remaining<br/>Format: NTFS<br/>Label: Windows<br/>Letter: C<br/>Install Target"]
+        end
+    end
+
+    P1 --> P2
+    P2 --> P3
+    P3 --> P4
+
+    classDef winre fill:#ff6b6b,stroke:#c92a2a,color:#fff,stroke-width:2px
+    classDef efi fill:#ffa94d,stroke:#d9480f,color:#fff,stroke-width:2px
+    classDef msr fill:#868e96,stroke:#495057,color:#fff,stroke-width:2px
+    classDef windows fill:#4dabf7,stroke:#1864ab,color:#fff,stroke-width:2px
+
+    class P1,P1_INFO winre
+    class P2,P2_INFO efi
+    class P3,P3_INFO msr
+    class P4,P4_INFO windows

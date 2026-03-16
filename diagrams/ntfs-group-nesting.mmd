@@ -1,0 +1,82 @@
+graph TB
+    subgraph IT_DEPT["IT DEPARTMENT"]
+        subgraph IT_USERS["Domain Users"]
+            IT_MGR1["IT Manager 1"]
+            IT_MGR2["IT Manager 2"]
+            IT_SD1["ServiceDesk User 1"]
+            IT_SD2["ServiceDesk User 2"]
+        end
+
+        subgraph IT_GLOBAL["Global Groups"]
+            IT_MGR_GG["IT_Management_GG<br/>Global Group"]
+            IT_SD_GG["IT_ServiceDesk_GG<br/>Global Group"]
+        end
+
+        subgraph IT_DL["Domain Local Groups"]
+            IT_MGR_DL["IT_Management_RW_DL<br/>Domain Local<br/>Modify Permission"]
+            IT_SD_DL["IT_ServiceDesk_RW_DL<br/>Domain Local<br/>Modify Permission"]
+        end
+
+        subgraph IT_FOLDERS["NTFS Folders"]
+            IT_MGMT_DIR["IT_Management<br/>Directory"]
+            IT_SD_DIR["IT_ServiceDesk<br/>Directory"]
+        end
+    end
+
+    IT_MGR1 --> IT_MGR_GG
+    IT_MGR2 --> IT_MGR_GG
+    IT_SD1 --> IT_SD_GG
+    IT_SD2 --> IT_SD_GG
+
+    IT_MGR_GG --> IT_MGR_DL
+    IT_SD_GG --> IT_SD_DL
+    IT_MGR_GG --> IT_SD_DL
+
+    IT_MGR_DL --> |"Modify"| IT_MGMT_DIR
+    IT_SD_DL --> |"Modify"| IT_SD_DIR
+
+    subgraph FIN_DEPT["FINANCE DEPARTMENT"]
+        subgraph FIN_USERS["Domain Users"]
+            FIN_CTRL1["Controller 1"]
+            FIN_CTRL2["Controller 2"]
+            FIN_ACCT1["Accountant 1"]
+            FIN_ACCT2["Accountant 2"]
+        end
+
+        subgraph FIN_GLOBAL["Global Groups"]
+            FIN_CTRL_GG["Fin_Controllers_GG<br/>Global Group"]
+            FIN_ACCT_GG["Fin_Accountants_GG<br/>Global Group"]
+        end
+
+        subgraph FIN_DL["Domain Local Groups"]
+            FIN_CTRL_DL["Fin_Controllers_RW_DL<br/>Domain Local<br/>Read/Write"]
+            FIN_ACCT_DL["Fin_Accountants_RW_DL<br/>Domain Local<br/>Read/Write"]
+        end
+
+        subgraph FIN_FOLDERS["NTFS Folders"]
+            FIN_CTRL_DIR["Fin_Controllers<br/>Directory"]
+            FIN_ACCT_DIR["Fin_Accounting<br/>Directory"]
+        end
+    end
+
+    FIN_CTRL1 --> FIN_CTRL_GG
+    FIN_CTRL2 --> FIN_CTRL_GG
+    FIN_ACCT1 --> FIN_ACCT_GG
+    FIN_ACCT2 --> FIN_ACCT_GG
+
+    FIN_CTRL_GG --> FIN_CTRL_DL
+    FIN_ACCT_GG --> FIN_ACCT_DL
+    FIN_CTRL_GG --> FIN_ACCT_DL
+
+    FIN_CTRL_DL --> |"Read/Write"| FIN_CTRL_DIR
+    FIN_ACCT_DL --> |"Read/Write"| FIN_ACCT_DIR
+
+    classDef user fill:#74c0fc,stroke:#1971c2,color:#fff,stroke-width:2px
+    classDef global fill:#ffa94d,stroke:#d9480f,color:#fff,stroke-width:2px
+    classDef dl fill:#e599f7,stroke:#9c36b5,color:#fff,stroke-width:2px
+    classDef folder fill:#69db7c,stroke:#2b8a3e,color:#fff,stroke-width:2px
+
+    class IT_MGR1,IT_MGR2,IT_SD1,IT_SD2,FIN_CTRL1,FIN_CTRL2,FIN_ACCT1,FIN_ACCT2 user
+    class IT_MGR_GG,IT_SD_GG,FIN_CTRL_GG,FIN_ACCT_GG global
+    class IT_MGR_DL,IT_SD_DL,FIN_CTRL_DL,FIN_ACCT_DL dl
+    class IT_MGMT_DIR,IT_SD_DIR,FIN_CTRL_DIR,FIN_ACCT_DIR folder

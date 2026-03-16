@@ -1,0 +1,44 @@
+graph TB
+    subgraph PASS1["PASS 1 - windowsPE"]
+        P1A["International-Core-WinPE<br/>Language: en-US<br/>Locale: en-US"]
+        P1B["Disk Configuration<br/>4 GPT Partitions<br/>WinRE / EFI / MSR / Windows"]
+        P1C["Windows Deployment Services<br/>Image Selection<br/>Install Image + Install To"]
+        P1D["WDS Login Credentials<br/>Domain Admin Account"]
+    end
+
+    subgraph PASS4["PASS 4 - specialize"]
+        P4A["Shell-Setup<br/>Computer Name<br/>Organization<br/>Time Zone"]
+        P4B["UnattendedJoin<br/>Join Domain<br/>Domain Credentials"]
+        P4C["International-Core<br/>Language/Locale Settings"]
+    end
+
+    subgraph PASS7["PASS 7 - oobeSystem"]
+        P7A["OOBE Settings<br/>Hide EULA<br/>Hide Registration<br/>Network: Work"]
+        P7B["AutoLogon<br/>Domain User Account<br/>Logon Count: 1"]
+        P7C["User Accounts<br/>Local Administrator<br/>Password Configuration"]
+    end
+
+    subgraph RESULT["DEPLOYMENT RESULT"]
+        DEPLOYED["Fully Configured<br/>Windows Server<br/>Domain Joined<br/>Auto-Logged In"]
+    end
+
+    P1A --> P1B
+    P1B --> P1C
+    P1C --> P1D
+    P1D --> PASS4
+    P4A --> P4B
+    P4B --> P4C
+    P4C --> PASS7
+    P7A --> P7B
+    P7B --> P7C
+    P7C --> DEPLOYED
+
+    classDef pass1 fill:#4dabf7,stroke:#1864ab,color:#fff,stroke-width:2px
+    classDef pass4 fill:#ffa94d,stroke:#d9480f,color:#fff,stroke-width:2px
+    classDef pass7 fill:#69db7c,stroke:#2b8a3e,color:#fff,stroke-width:2px
+    classDef result fill:#e599f7,stroke:#9c36b5,color:#fff,stroke-width:2px
+
+    class P1A,P1B,P1C,P1D pass1
+    class P4A,P4B,P4C pass4
+    class P7A,P7B,P7C pass7
+    class DEPLOYED result
